@@ -1,0 +1,50 @@
+{
+    "name": "safaridriver",
+    "version": "1.0.1",
+    "author": "Christian Bromann <mail@bromann.dev>",
+    "license": "MIT",
+    "description": "An NPM wrapper for handling the Safaridriver binary.",
+    "homepage": "https://github.com/webdriverio-community/node-safaridriver#readme",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/webdriverio-community/node-safaridriver.git"
+    },
+    "keywords": [
+        "safari",
+        "safaridriver",
+        "webdriver",
+        "webdriverio",
+        "selenium"
+    ],
+    "bugs": {
+        "url": "https://github.com/webdriverio-community/node-safaridriver/issues"
+    },
+    "engines": {
+        "node": ">=18.0.0"
+    },
+    "main": "./dist/cjs/index.js",
+    "type": "module",
+    "module": "./dist/index.js",
+    "exports": {
+        ".": [
+            {
+                "types": "./dist/index.d.ts",
+                "import": "./dist/index.js",
+                "require": "./dist/cjs/index.js"
+            },
+            "./dist/cjs/index.js"
+        ]
+    },
+    "types": "./dist/index.d.ts",
+    "typeScriptVersion": "3.8.3",
+    "scripts": {
+        "build": "tsc -b . && node ../../scripts/copy-cjs-pkg.mjs",
+        "ci": "run-s lint build test",
+        "clean": "rimraf ./node_modules ./dist",
+        "test": "run-s test:*",
+        "test:lint": "eslint src && eslint tests",
+        "test:unit": "vitest run",
+        "test:interop": "node ./tests/interop/cjs.test.js",
+        "watch": "pnpm run build -- --watch"
+    }
+}

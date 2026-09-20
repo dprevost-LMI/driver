@@ -1,0 +1,9 @@
+src
+tests
+coverage
+*.tgz
+/.*
+/*.mjs
+/tsconfig.json
+vitest.config.ts
+CHANGELOG.md
