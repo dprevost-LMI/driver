@@ -1,0 +1,179 @@
+# WebdriverIO Browser Drivers Monorepo (WIP)
+
+This monorepo contains Node.js wrappers for managing browser driver binaries ([Geckodriver](https://github.com/webdriverio-community/node-geckodriver/blob/main/README.md), [Edgedriver](https://github.com/webdriverio-community/node-edgedriver/blob/main/README.md), and [Safaridriver](https://github.com/webdriverio-community/node-safaridriver)). These packages facilitate downloading, starting, and managing driver server processes for [WebdriverIO](https://webdriver.io) and other test automation frameworks.
+
+---
+
+## Packages
+
+| Package | Browser | Description | NPM Link |
+| --- | --- | --- | --- |
+| `geckodriver` | Firefox | Wrapper for Mozilla's Geckodriver | [![npm](https://img.shields.io/npm/v/geckodriver.svg)](https://www.npmjs.com/package/geckodriver) |
+| `edgedriver` | Microsoft Edge | Wrapper for Microsoft Edge Driver | [![npm](https://img.shields.io/npm/v/edgedriver.svg)](https://www.npmjs.com/package/edgedriver) |
+| `safaridriver` | Safari | Wrapper for macOS `safaridriver` binary | [![npm](https://img.shields.io/npm/v/safaridriver.svg)](https://www.npmjs.com/package/safaridriver) |
+
+---
+
+## Installation
+
+Install the driver package needed for your target browser:
+
+```bash
+# Firefox
+npm install geckodriver --save-dev
+
+# Microsoft Edge
+npm install edgedriver --save-dev
+
+# Safari (macOS only)
+npm install safaridriver --save-dev
+
+```
+
+---
+
+## CLI Usage
+
+Drivers can be executed directly using `npx`:
+
+```bash
+# Start Geckodriver
+npx geckodriver --port=4444
+
+# Start Edgedriver
+npx edgedriver --port=4444
+
+# Start Safaridriver (macOS)
+npx safaridriver --port=4444
+
+```
+
+### Environment Variables & Global Installation Setup
+
+#### Auto-Installation Flags
+
+By default, binaries download when initialized via CLI or API. To download them during `npm install`, pass the respective flag:
+
+* **Geckodriver:** `GECKODRIVER_AUTO_INSTALL=1 npm i`
+* **Edgedriver:** `EDGEDRIVER_AUTO_INSTALL=1 npm i`
+
+#### Version Pinning & Custom Sources
+
+* **Custom Driver Version:**
+* `GECKODRIVER_VERSION="0.31.0"`
+* `EDGEDRIVER_VERSION="114.0.1823.18"`
+
+
+* **Custom CDN URL:**
+* `GECKODRIVER_CDNURL=https://INTERNAL_CDN/geckodriver/download`
+* `EDGEDRIVER_CDNURL=https://INTERNAL_CDN/edgedriver/download`
+
+
+* **HTTP/HTTPS Proxy:** Standard `HTTP_PROXY` and `HTTPS_PROXY` environment variables are supported for downloads.
+
+#### Windows Setup (`selenium-webdriver` note)
+
+When installing `geckodriver` or `edgedriver` globally on Windows, `selenium-webdriver` expects the `.exe` extension in PATH. You can create a symlink in your global npm binary directory:
+
+```cmd
+mklink %USERPROFILE%\AppData\Roaming\npm\geckodriver.exe %USERPROFILE%\AppData\Roaming\npm\node_modules\geckodriver\geckodriver.exe
+
+```
+
+---
+
+## Programmatic Usage
+
+All driver packages export methods to programmatically control browser driver instances within Node.js scripts.
+
+### ESM Example (`geckodriver` / `edgedriver`)
+
+```typescript
+import { start } from 'geckodriver'; // or 'edgedriver'
+import { remote } from 'webdriverio';
+import waitPort from 'wait-port';
+
+// 1. Start driver process
+const cp = await start({ port: 4444 });
+
+// 2. Wait for driver port to open
+await waitPort({ port: 4444 });
+
+// 3. Connect WebdriverIO session
+const browser = await remote({
+  capabilities: {
+    browserName: 'firefox' // or 'MicrosoftEdge'
+  }
+});
+
+await browser.url('[https://webdriver.io](https://webdriver.io)');
+console.log(await browser.getTitle());
+
+// 4. Terminate process when finished
+cp.kill();
+
+```
+
+### ESM Example (`safaridriver`)
+
+```typescript
+import safaridriver from 'safaridriver';
+import { remote } from 'webdriverio';
+
+// 1. Start Safaridriver server
+await safaridriver.start({ port: 4444 });
+
+// 2. Connect WebdriverIO session
+const browser = await remote({
+  capabilities: {
+    browserName: 'safari'
+  }
+});
+
+await browser.url('[https://webdriver.io](https://webdriver.io)');
+console.log(await browser.getTitle());
+
+// 3. Stop Safaridriver process
+safaridriver.stop();
+
+```
+
+---
+
+## Configuration & Options
+
+### Options for `geckodriver` & `edgedriver`
+
+Passed into the `start(options)` method:
+
+| Option | Type | Default | Description |
+| --- | --- | --- | --- |
+| `port` | `number` | — | Port to listen on. |
+| `host` | `string` | `0.0.0.0` | Host IP address to bind server. |
+| `customGeckoDriverPath` / `customEdgeDriverPath` | `string` | `process.env.GECKODRIVER_PATH` | Path to custom/cached driver binary. |
+| `cacheDir` | `string` | `os.tmpdir()` | Root directory for caching downloaded binaries. |
+| `spawnOpts` | `object` | `undefined` | Spawn options passed directly to Node.js `child_process.spawn`. |
+| `allowHosts` | `string[]` | `[]` | List of explicit host names allowed to connect. |
+| `allowOrigins` | `string[]` | `[]` | List of allowed request origins (`scheme://host:port`). |
+
+### Options for `safaridriver`
+
+Passed into `safaridriver.start(options)`:
+
+| Option | Type | Default | Description |
+| --- | --- | --- | --- |
+| `port` | `number` | `4444` | Port for HTTP server listening. |
+| `path` | `string` | `/usr/bin/safaridriver` | Path to system `safaridriver` binary. |
+| `useTechnologyPreview` | `boolean` | `false` | Enables Safari Technology Preview driver binary. |
+| `enable` | `boolean` | `false` | Configures macOS permissions ("Enable Remote Automation") and exits immediately. |
+| `diagnose` | `boolean` | `false` | Enables diagnostic log output for driver sessions. |
+
+---
+
+## License
+
+[MIT](https://www.google.com/search?q=LICENSE&utm_source=gemini)
+
+```
+
+```
