@@ -1,0 +1,8 @@
+{
+  "files": [],
+  "references": [
+    { "path": "./packages/node-edgedriver" },
+    { "path": "./packages/node-geckodriver" },
+    { "path": "./packages/node-safaridriver" }
+  ]
+}
