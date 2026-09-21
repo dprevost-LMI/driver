@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       driver:
-        description: "Which driver to release"
+        description: 'Which driver to release ("all" only releases packages changed since their last tag; picking one forces its release)'
         required: true
         type: choice
         default: "all"
@@ -34,6 +34,14 @@ on:
         options:
           - "yes"
           - "no"
+      dryRun:
+        description: Simulate the release (no git push, no GitHub release, no npm publish)
+        required: true
+        type: choice
+        default: "no"
+        options:
+          - "yes"
+          - "no"
 
 env:
   NPM_CONFIG_PROVENANCE: true
@@ -48,10 +56,37 @@ jobs:
     outputs:
       packages: ${{ steps.set.outputs.packages }}
     steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: 'main'
+          fetch-depth: 0
+          fetch-tags: true
       - id: set
+        # driver=all: auto-detect which packages changed since their last release tag
+        # and only release those (a package with no prior tag is always included).
+        # A specific driver is an explicit choice, so it's always released ("force").
         run: |
           if [ "${{ inputs.driver }}" = "all" ]; then
-            echo 'packages=["packages/node-edgedriver","packages/node-geckodriver","packages/node-safaridriver"]' >> "$GITHUB_OUTPUT"
+            packages=()
+            for name in edgedriver geckodriver safaridriver; do
+              dir="packages/node-${name}"
+              last_tag=$(git tag -l "${name}@*" --sort=-v:refname | head -n1)
+              if [ -z "$last_tag" ]; then
+                echo "$name: no previous release tag, including"
+                packages+=("$dir")
+              elif ! git diff --quiet "$last_tag"..HEAD -- "$dir"; then
+                echo "$name: changes since $last_tag, including"
+                packages+=("$dir")
+              else
+                echo "$name: no changes since $last_tag, skipping"
+              fi
+            done
+            if [ ${#packages[@]} -eq 0 ]; then
+              packages_json="[]"
+            else
+              packages_json=$(printf '%s\n' "${packages[@]}" | jq -R . | jq -sc .)
+            fi
+            echo "packages=$packages_json" >> "$GITHUB_OUTPUT"
           else
             echo 'packages=["packages/node-${{ inputs.driver }}"]' >> "$GITHUB_OUTPUT"
           fi
@@ -94,13 +129,13 @@ jobs:
         # publishing (requires id-token: write + a trusted publisher configured
         # for this package on npmjs.com)
         working-directory: ${{ matrix.package }}
-        run: npx release-it ${{ inputs.releaseType }} --github.release --ci --npm.skipChecks --no-git.requireCleanWorkingDir --npm.tag=${{ inputs.distTag }}
+        run: npx release-it ${{ inputs.releaseType }} --github.release --ci --npm.skipChecks --no-git.requireCleanWorkingDir --npm.tag=${{ inputs.distTag }} ${{ inputs.dryRun == 'yes' && '--dry-run' || '' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         if: ${{ inputs.preRelease == 'no' }}
       - name: Pre-Release
         working-directory: ${{ matrix.package }}
-        run: npx release-it ${{ inputs.releaseType }} --github.release --ci --npm.skipChecks --no-git.requireCleanWorkingDir --preRelease=alpha --github.preRelease --npm.tag=next
+        run: npx release-it ${{ inputs.releaseType }} --github.release --ci --npm.skipChecks --no-git.requireCleanWorkingDir --preRelease=alpha --github.preRelease --npm.tag=next ${{ inputs.dryRun == 'yes' && '--dry-run' || '' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         if: ${{ inputs.preRelease == 'yes' }}
