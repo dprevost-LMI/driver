@@ -1,6 +1,9 @@
 # Changelog
 
-For updates and changelogs on v4.0.0 and above, go to https://github.com/webdriverio-community/node-geckodriver/releases.
+Older releases (v4.0.0 and above) can be found at
+https://github.com/webdriverio-community/node-geckodriver/releases.
+Newest releases can be found at
+https://github.com/webdriverio/driver/releases.
 
 * 3.2.0 - geckodriver 0.32.0, arm64 support for Mac, Linux and Windows, added `GECKODRIVER_ARCH` for custom arch downloads.
 * 3.1.0 - geckodriver 0.31.0
