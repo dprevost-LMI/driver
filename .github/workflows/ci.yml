@@ -8,15 +8,18 @@ on:
       - v[0-9]+.[0-9]+.[0-9]+*
   pull_request:
 
+# one run per ref; newer push cancels the older one
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build:
     strategy:
       fail-fast: false
       matrix:
         os: [macos-latest, ubuntu-latest, windows-latest]
-        # full Node.js matrix (https://github.com/nodejs/release#release-schedule)
-        # only runs on push (merge to main / tags); PRs only test Node 24 to keep
-        # feedback fast
+        # full matrix on push; PRs test Node 24 only, for fast feedback
         node: ${{ github.event_name == 'pull_request' && fromJson('[24]') || fromJson('[20, 22, 24, 26]') }}
     runs-on: ${{ matrix.os }}
     steps:
