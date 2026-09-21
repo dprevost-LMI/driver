@@ -1,4 +1,5 @@
 {
+  "extends": "../../.release-it.json",
   "git": {
     "tagName": "edgedriver@${version}"
   }

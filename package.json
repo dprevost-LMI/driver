@@ -17,6 +17,7 @@
     "checks:all": "pnpm run test:lint && pnpm run test:unit && pnpm run test:e2e"
   },
   "devDependencies": {
+    "@release-it/conventional-changelog": "^12.0.2",
     "@stylistic/eslint-plugin": "^5.10.0",
     "@types/node": "^25.0.3",
     "@types/which": "^3.0.4",
