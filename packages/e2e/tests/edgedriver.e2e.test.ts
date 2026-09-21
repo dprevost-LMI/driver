@@ -8,6 +8,27 @@ import { beforeEach, afterEach, describe, it } from 'vitest'
 
 import { start, download, findEdgePath } from 'edgedriver'
 
+/**
+ * Force-kill any leftover msedgedriver/Edge processes. Sessions started via
+ * `wdio:edgedriverOptions.binary` have their driver process managed
+ * internally by WebdriverIO - deleteSession() ends the WebDriver session but
+ * doesn't guarantee that process has actually exited yet. A lingering
+ * instance either blocks deleting its own binary on Windows (EPERM: file
+ * still in use) or, on Linux/macOS, silently keeps running and consuming
+ * memory into the next test (surfaces as a bare "Killed" + exit 137).
+ */
+function killDriverProcesses() {
+    const isWindows = process.platform === 'win32'
+    const patterns = isWindows ? ['msedgedriver.exe', 'msedge.exe'] : ['msedgedriver', 'microsoft-edge']
+    for (const pattern of patterns) {
+        try {
+            execSync(isWindows ? `taskkill /IM ${pattern} /F /T` : `pkill -9 -f ${pattern}`, { stdio: 'ignore' })
+        } catch {
+            // no matching process running, nothing to clean up
+        }
+    }
+}
+
 describe('Edgedriver E2E Tests', () => {
     /**
      * Give every test its own driver cache dir instead of the shared default
@@ -20,25 +41,17 @@ describe('Edgedriver E2E Tests', () => {
 
     beforeEach(async () => {
         cacheDir = await fs.mkdtemp(path.join(os.tmpdir(), 'edgedriver-e2e-'))
-
-        /**
-         * Force-kill any leftover msedgedriver/Edge processes from a previous test.
-         * cp.kill() below isn't guaranteed to have fully torn down the Edge browser
-         * process it spawned by the time the next test starts; a lingering instance
-         * here can push memory over the CI runner's limit and get OOM-killed
-         * (surfaces as a bare "Killed" + exit 137 in the next test).
-         */
-        for (const pattern of ['msedgedriver', 'microsoft-edge']) {
-            try {
-                execSync(`pkill -9 -f ${pattern}`)
-            } catch {
-                // no matching process running, nothing to clean up
-            }
-        }
+        killDriverProcesses()
     })
 
     afterEach(async () => {
-        await fs.rm(cacheDir, { recursive: true, force: true })
+        killDriverProcesses()
+        /**
+         * maxRetries/retryDelay: Windows can lag briefly between a process
+         * exiting and the OS actually releasing its handle on the binary,
+         * even after killDriverProcesses() above returns.
+         */
+        await fs.rm(cacheDir, { recursive: true, force: true, maxRetries: 5, retryDelay: 200 })
     })
 
     it('start edgedriver manually', async () => {
