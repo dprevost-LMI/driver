@@ -1,5 +1,12 @@
 {
   "git": {
     "tagName": "safaridriver@${version}"
+  },
+  "plugins": {
+    "@release-it/conventional-changelog": {
+      "preset": { "name": "conventionalcommits" },
+      "gitRawCommitsOpts": { "to": "HEAD" },
+      "commitsOpts": { "to": "HEAD" }
+    }
   }
 }
