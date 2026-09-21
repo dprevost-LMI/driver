@@ -42,7 +42,7 @@
     "clean": "rimraf ./dist",
     "postinstall": "test -f ./dist/install.js && node ./dist/install.js || echo \"Skipping install, project not build!\"",
     "test": "run-s test:*",
-    "test:lint": "eslint",
+    "test:lint": "eslint src && eslint bin && eslint tests && eslint vitest.config.mjs",
     "test:unit": "vitest --run",
     "watch": "pnpm run build -- --watch"
   },
