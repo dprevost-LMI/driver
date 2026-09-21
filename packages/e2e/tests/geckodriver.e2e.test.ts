@@ -17,7 +17,7 @@ describe('Geckodriver E2E Tests', () => {
                 }
             }
         })
-        await browser.url('https://webdriver.io')
+        await browser.url('https://guinea-pig.webdriver.io/')
         await browser.deleteSession()
     })
 
@@ -42,7 +42,7 @@ describe('Geckodriver E2E Tests', () => {
          */
         firefoxBinary = browser.requestedCapabilities['moz:firefoxOptions'].binary
 
-        await browser.url('https://webdriver.io')
+        await browser.url('https://guinea-pig.webdriver.io/')
         await browser.deleteSession()
     })
 
@@ -64,7 +64,7 @@ describe('Geckodriver E2E Tests', () => {
                     }
                 }
             })
-            await browser.url('https://webdriver.io')
+            await browser.url('https://guinea-pig.webdriver.io/')
             await browser.deleteSession()
         } finally {
             cp.kill()
