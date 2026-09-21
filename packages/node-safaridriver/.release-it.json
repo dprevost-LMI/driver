@@ -1,12 +1,6 @@
 {
+  "extends": "../../.release-it.json",
   "git": {
     "tagName": "safaridriver@${version}"
-  },
-  "plugins": {
-    "@release-it/conventional-changelog": {
-      "preset": { "name": "conventionalcommits" },
-      "gitRawCommitsOpts": { "to": "HEAD", "path": "." },
-      "commitsOpts": { "to": "HEAD", "path": "." }
-    }
   }
 }
