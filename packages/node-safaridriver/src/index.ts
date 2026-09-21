@@ -40,7 +40,7 @@ export interface SafaridriverOptions {
     useTechnologyPreview?: boolean
 }
 
-let instance: ChildProcess
+let instance: ChildProcess | undefined
 let instanceOptions: SafaridriverOptions
 export const start = (options: SafaridriverOptions = {}) => {
     const port = typeof options.port === 'number' ? options.port : DEFAULT_PORT

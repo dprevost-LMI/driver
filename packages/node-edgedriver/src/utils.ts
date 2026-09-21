@@ -75,7 +75,7 @@ export function findByWhich(executables: string[], priorities: Priorities[]) {
     executables.forEach((executable) => {
         try {
             const browserPath = which.sync(executable)
-            if (hasAccess(browserPath)) {
+            if (hasAccessSync(browserPath)) {
                 installations.push(browserPath)
             }
         } catch {

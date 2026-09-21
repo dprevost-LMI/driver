@@ -14,12 +14,10 @@ jobs:
       fail-fast: false
       matrix:
         os: [macos-latest, ubuntu-latest, windows-latest]
-        node: # Node.js versions https://github.com/nodejs/release#release-schedule
-          - 20
-          - 22
-          - 24
-          - 25
-          - 26
+        # full Node.js matrix (https://github.com/nodejs/release#release-schedule)
+        # only runs on push (merge to main / tags); PRs only test Node 24 to keep
+        # feedback fast
+        node: ${{ github.event_name == 'pull_request' && fromJson('[24]') || fromJson('[20, 22, 24, 26]') }}
     runs-on: ${{ matrix.os }}
     steps:
       - name: Set git to use LF

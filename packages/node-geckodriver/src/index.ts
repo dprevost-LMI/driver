@@ -9,7 +9,7 @@ import type { GeckodriverParameters } from './types.js'
 const log = logger('geckodriver')
 
 export async function start (params: GeckodriverParameters): Promise<ChildProcess> {
-    const { cacheDir, customGeckoDriverPath, spawnOpts, geckoDriverVersion, ...startArgs } = params
+    const { cacheDir, customGeckoDriverPath, spawnOpts = {}, geckoDriverVersion, ...startArgs } = params
     let geckoDriverPath = (
         customGeckoDriverPath ||
     process.env.GECKODRIVER_PATH ||

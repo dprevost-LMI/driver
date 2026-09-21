@@ -34,7 +34,7 @@ if (process.env.HTTPS_PROXY) {
 }
 
 export async function download (
-    edgeVersion: string = process.env.EDGEDRIVER_VERSION,
+    edgeVersion: string | undefined = process.env.EDGEDRIVER_VERSION,
     cacheDir: string = process.env.EDGEDRIVER_CACHE_DIR || os.tmpdir()
 ) {
     const binaryFilePath = path.resolve(cacheDir, BINARY_FILE)
@@ -50,6 +50,9 @@ export async function download (
 
         log.info(`Trying to detect Microsoft Edge version from binary found at ${edgePath}`)
         edgeVersion = os.platform() === 'win32' ? await getEdgeVersionWin(edgePath) : await getEdgeVersionUnix(edgePath)
+        if (!edgeVersion) {
+            throw new Error(`Could not detect Microsoft Edge version from binary found at ${edgePath}`)
+        }
         log.info(`Detected Microsoft Edge v${edgeVersion}`)
     }
 
@@ -88,7 +91,7 @@ async function downloadDriver(version: string) {
             return await downloadDriver(latestVersion)
         }
 
-        throw new Error(`Failed to download Edgedriver: ${err.message}`)
+        throw new Error(`Failed to download Edgedriver: ${err instanceof Error ? err.message : err}`)
     }
 }
 
@@ -183,8 +186,9 @@ export async function fetchVersion (edgeVersion: string) {
      * check for a number in the version and check for that
      */
     const MATCH_VERSION = /\d+/g
-    if (edgeVersion.match(MATCH_VERSION)) {
-        const [major] = edgeVersion.match(MATCH_VERSION)
+    const versionMatch = edgeVersion.match(MATCH_VERSION)
+    if (versionMatch) {
+        const [major] = versionMatch
         const url = format(LATEST_RELEASE_URL, major.toString().toUpperCase(), platform.toUpperCase())
         log.info(`Fetching latest version from ${url}`)
         const res = await fetch(url, fetchOpts)

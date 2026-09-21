@@ -40,7 +40,7 @@
     "scripts": {
         "build": "tsc -b . && node ../../scripts/copy-cjs-pkg.mjs",
         "ci": "run-s lint build test",
-        "clean": "rimraf ./node_modules ./dist",
+        "clean": "rimraf ./dist",
         "test": "run-s test:*",
         "test:lint": "eslint src && eslint tests",
         "test:unit": "vitest run",

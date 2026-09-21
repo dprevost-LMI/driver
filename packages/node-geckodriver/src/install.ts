@@ -38,7 +38,7 @@ export function getBinaryFilename (version: string) {
 }
 
 export async function download (
-    geckodriverVersion: string = process.env.GECKODRIVER_VERSION,
+    geckodriverVersion: string | undefined = process.env.GECKODRIVER_VERSION,
     cacheDir: string = process.env.GECKODRIVER_CACHE_DIR || os.tmpdir()
 ) {
     /**
@@ -63,7 +63,11 @@ export async function download (
         if (!version) {
             throw new Error(`Couldn't find version property in Cargo.toml file: ${JSON.stringify(toml)}`)
         }
-        geckodriverVersion = version.split(' = ').pop().slice(1, -1)
+        const versionPart = version.split(' = ').pop()
+        if (!versionPart) {
+            throw new Error(`Couldn't parse version property in Cargo.toml file: ${JSON.stringify(toml)}`)
+        }
+        geckodriverVersion = versionPart.slice(1, -1)
         log.info(`Detected Geckodriver v${geckodriverVersion} to be latest`)
 
         // the resolved latest may already be cached
@@ -78,7 +82,7 @@ export async function download (
     log.info(`Downloading Geckodriver from ${url}`)
     const res = await retryFetch(url, fetchOpts)
 
-    if (res.status !== 200) {
+    if (!res.body || res.status !== 200) {
         throw new Error(`Failed to download binary (statusCode ${res.status}): ${res.statusText}`)
     }
 
