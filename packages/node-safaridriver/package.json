@@ -42,7 +42,7 @@
         "ci": "run-s lint build test",
         "clean": "rimraf ./dist",
         "test": "run-s test:*",
-        "test:lint": "eslint src && eslint tests",
+        "test:lint": "oxlint .",
         "test:unit": "vitest run",
         "test:interop": "node ./tests/interop/cjs.test.js",
         "watch": "pnpm run build -- --watch"

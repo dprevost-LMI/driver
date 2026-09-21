@@ -1,0 +1,79 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["eslint", "typescript", "unicorn"],
+  "jsPlugins": ["@stylistic/eslint-plugin"],
+  "env": {
+    "node": true
+  },
+  "ignorePatterns": ["**/dist/**"],
+  "options": {
+    "typeAware": false,
+    "respectEslintDisableDirectives": true
+  },
+  "categories": {
+    "correctness": "error"
+  },
+  "rules": {
+    "@stylistic/quotes": ["error", "single", { "avoidEscape": true }],
+    "@stylistic/semi": ["error", "never"],
+    "@stylistic/indent": ["error", 4, { "SwitchCase": 0 }],
+    "@stylistic/no-multiple-empty-lines": ["error", { "max": 1, "maxEOF": 1 }],
+    "@stylistic/array-bracket-spacing": ["error", "never"],
+    "@stylistic/brace-style": ["error", "1tbs", { "allowSingleLine": true }],
+    "@stylistic/comma-spacing": ["error", { "before": false, "after": true }],
+    "@stylistic/no-tabs": "error",
+    "@stylistic/no-trailing-spaces": ["error", { "skipBlankLines": false, "ignoreComments": false }],
+    "@stylistic/object-curly-spacing": ["error", "always"],
+    "@stylistic/keyword-spacing": "error",
+    "@stylistic/linebreak-style": ["error", "unix"],
+    "eqeqeq": ["error", "always"],
+    "prefer-const": "error",
+    "no-lonely-if": "error",
+    "dot-notation": "error",
+    "no-else-return": "error",
+    "no-var": "error",
+    "unicode-bom": ["error", "never"],
+    "curly": ["error", "all"],
+    "no-dupe-class-members": "off",
+    "unicorn/prefer-node-protocol": "error",
+    "unicorn/prefer-ternary": "error",
+    "typescript/no-array-constructor": "error",
+    "typescript/no-explicit-any": "error",
+    "typescript/no-extra-non-null-assertion": "error",
+    "typescript/no-misused-new": "error",
+    "typescript/no-non-null-asserted-optional-chain": "error",
+    "typescript/no-require-imports": "error",
+    "typescript/no-unnecessary-type-constraint": "error",
+    "typescript/no-unsafe-declaration-merging": "error",
+    "typescript/no-unused-expressions": "error",
+    "typescript/no-wrapper-object-types": "error",
+    "typescript/prefer-as-const": "error",
+    "typescript/prefer-namespace-keyword": "error",
+    "typescript/consistent-type-imports": "error",
+    "typescript/ban-ts-comment": "off",
+    "typescript/no-unsafe-function-type": "off",
+    "typescript/triple-slash-reference": "off",
+    "typescript/no-namespace": "off",
+    "typescript/no-empty-object-type": "off",
+    "typescript/no-this-alias": "off"
+  },
+  "overrides": [
+    {
+      "files": ["*.ts", "*.tsx", "*.mts", "*.cts", "**/*.ts", "**/*.tsx", "**/*.mts", "**/*.cts"],
+      "rules": {
+        "dot-notation": "off",
+        "no-unused-vars": "off",
+        "typescript/no-unused-vars": ["error", { "argsIgnorePattern": "^_", "varsIgnorePattern": "^_" }],
+        "no-undef": "off",
+        "no-redeclare": "off"
+      }
+    },
+    {
+      "files": ["packages/node-*/tests/**/*"],
+      "rules": {
+        "typescript/no-require-imports": "off",
+        "typescript/no-explicit-any": "off"
+      }
+    }
+  ]
+}

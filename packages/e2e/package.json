@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test:lint": "eslint tests && eslint vitest.config.mjs",
+    "test:lint": "oxlint .",
     "test:e2e": "vitest run"
   },
   "devDependencies": {

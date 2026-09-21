@@ -2,7 +2,7 @@
  * a top-level `import type` here would emit a trailing `export {}` marker,
  * breaking this file's CommonJS interop (see dist/cjs/package.json)
  */
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
+// oxlint-disable-next-line typescript/consistent-type-imports
 async function start (params: import('../types.js').EdgedriverParameters) {
     const esmPkg = await import('../index.js')
     return esmPkg.start(params)
