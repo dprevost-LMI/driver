@@ -106,7 +106,7 @@ const browser = await remote({
   }
 });
 
-await browser.url('[https://webdriver.io](https://webdriver.io)');
+await browser.url('https://webdriver.io');
 console.log(await browser.getTitle());
 
 // 4. Terminate process when finished
@@ -121,7 +121,7 @@ import safaridriver from 'safaridriver';
 import { remote } from 'webdriverio';
 
 // 1. Start Safaridriver server
-await safaridriver.start({ port: 4444 });
+safaridriver.start({ port: 4444 });
 
 // 2. Connect WebdriverIO session
 const browser = await remote({
@@ -130,7 +130,7 @@ const browser = await remote({
   }
 });
 
-await browser.url('[https://webdriver.io](https://webdriver.io)');
+await browser.url('https://webdriver.io');
 console.log(await browser.getTitle());
 
 // 3. Stop Safaridriver process
@@ -142,7 +142,7 @@ safaridriver.stop();
 
 ## Configuration & Options
 
-### Options for `geckodriver` & `edgedriver`
+### Options for `geckodriver`
 
 Passed into the `start(options)` method:
 
@@ -150,11 +150,27 @@ Passed into the `start(options)` method:
 | --- | --- | --- | --- |
 | `port` | `number` | — | Port to listen on. |
 | `host` | `string` | `0.0.0.0` | Host IP address to bind server. |
-| `customGeckoDriverPath` / `customEdgeDriverPath` | `string` | `process.env.GECKODRIVER_PATH` | Path to custom/cached driver binary. |
-| `cacheDir` | `string` | `os.tmpdir()` | Root directory for caching downloaded binaries. |
+| `customGeckoDriverPath` | `string` | `process.env.GECKODRIVER_PATH` | Path to custom/cached driver binary. |
+| `cacheDir` | `string` | `process.env.GECKODRIVER_CACHE_DIR \|\| os.tmpdir()` | Root directory for caching downloaded binaries. |
 | `spawnOpts` | `object` | `undefined` | Spawn options passed directly to Node.js `child_process.spawn`. |
 | `allowHosts` | `string[]` | `[]` | List of explicit host names allowed to connect. |
 | `allowOrigins` | `string[]` | `[]` | List of allowed request origins (`scheme://host:port`). |
+
+See the [geckodriver README](packages/node-geckodriver/README.md) for the full list of options.
+
+### Options for `edgedriver`
+
+Passed into the `start(options)` method:
+
+| Option | Type | Default | Description |
+| --- | --- | --- | --- |
+| `port` | `number` | — | Port to listen on. |
+| `customEdgeDriverPath` | `string` | `process.env.EDGEDRIVER_PATH` | Path to custom/cached driver binary. |
+| `cacheDir` | `string` | `process.env.EDGEDRIVER_CACHE_DIR \|\| os.tmpdir()` | Root directory for caching downloaded binaries. |
+| `allowedIps` | `string[]` | `['']` | List of remote IP addresses allowed to connect. |
+| `allowedOrigins` | `string[]` | `['*']` | List of allowed request origins. Using `*` to allow any origin is dangerous! |
+
+See the [edgedriver README](packages/node-edgedriver/README.md) for the full list of options.
 
 ### Options for `safaridriver`
 
@@ -172,8 +188,4 @@ Passed into `safaridriver.start(options)`:
 
 ## License
 
-[MIT](https://www.google.com/search?q=LICENSE&utm_source=gemini)
-
-```
-
-```
+[MIT](LICENSE)

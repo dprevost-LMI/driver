@@ -173,15 +173,15 @@ Set Gecko log level [possible values: `fatal`, `error`, `warn`, `info`, `config`
 
 Type: `string`
 
-### `logNoTruncated`
-Write server log to file instead of stderr, increases log level to `INFO`.
+### `logNoTruncate`
+Log verbosely and don't truncate long strings so that the log can be replayed.
 
 Type: `boolean`
 
 ### `marionetteHost`
 Host to use to connect to Gecko.
 
-Type: `boolean`<br />
+Type: `string`<br />
 Default: `127.0.0.1`
 
 ### `marionettePort`

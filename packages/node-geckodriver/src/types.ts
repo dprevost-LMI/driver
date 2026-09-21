@@ -29,7 +29,7 @@ export interface GeckodriverParameters {
     connectExisting?: boolean
     /**
      * Host IP to use for WebDriver server
-     * @default 127.0.0.1
+     * @default 0.0.0.0
      */
     host?: string
     /**
@@ -42,7 +42,7 @@ export interface GeckodriverParameters {
      */
     log?: LogLevel
     /**
-     * write server log to file instead of stderr, increases log level to INFO
+     * log verbosely and don't truncate long strings so that the log can be replayed
      */
     logNoTruncate?: boolean
     /**

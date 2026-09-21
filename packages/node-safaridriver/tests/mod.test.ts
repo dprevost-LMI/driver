@@ -5,7 +5,9 @@ import safaridriver from '../src/index.js'
 
 vi.mock('node:child_process', () => ({
     default: {
-        execFile: vi.fn().mockReturnValue({ kill: vi.fn() })
+        // fresh mock per call, so each test's process handle has its own
+        // independent kill() call count rather than sharing one across the file
+        execFile: vi.fn().mockImplementation(() => ({ kill: vi.fn() }))
     }
 }))
 
@@ -65,7 +67,7 @@ test('can start with options', () => {
 })
 
 test('can stop server', () => {
-    const intance = safaridriver.start()
+    const instance = safaridriver.start()
     safaridriver.stop()
-    expect(intance.kill).toBeCalledTimes(5)
+    expect(instance.kill).toBeCalledTimes(1)
 })

@@ -1,6 +1,6 @@
 # Safaridriver for Node.js [![CI](https://github.com/webdriverio-community/node-safaridriver/actions/workflows/ci.yml/badge.svg)](https://github.com/webdriverio-community/node-safaridriver/actions/workflows/ci.yml) [![Audit](https://github.com/webdriverio-community/node-safaridriver/actions/workflows/audit.yml/badge.svg)](https://github.com/webdriverio-community/node-safaridriver/actions/workflows/audit.yml)
 
-> A Node.js untility to manage Safaridriver sessions.
+> A Node.js utility to manage Safaridriver sessions.
 
 The Safaridriver utility is used to launch an HTTP server that implements the [WebDriver](https://w3c.github.io/webdriver/) REST API. When launched, Safaridriver allows for automated testing of web content using the version of Safari that is installed with macOS.
 
@@ -19,7 +19,7 @@ To start a Safaridriver server, import the package and run:
 ```js
 import safaridriver from 'safaridriver'
 
-await safaridriver.start()
+safaridriver.start()
 
 // run some automation...
 
@@ -45,7 +45,7 @@ __Default:__ `/usr/bin/safaridriver`
 
 ### `useTechnologyPreview`
 
-If set to `true`, it will start the Safaridriver for Safari Technology Preview. Make sure you have it installed by installing Safari Technology Preview on Apple's [offical website](https://developer.apple.com/safari/technology-preview/).
+If set to `true`, it will start the Safaridriver for Safari Technology Preview. Make sure you have it installed by installing Safari Technology Preview on Apple's [official website](https://developer.apple.com/safari/technology-preview/).
 
 __Type:__ `boolean`<br />
 __Default:__ `false`
@@ -68,4 +68,4 @@ __Default:__ `false`
 
 ----
 
-For more information on WebdriverIO see the [homepage](http://webdriver.io).
+For more information on WebdriverIO see the [homepage](https://webdriver.io).

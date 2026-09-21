@@ -1,7 +1,7 @@
 EdgeDriver [![CI](https://github.com/webdriverio-community/node-edgedriver/actions/workflows/ci.yml/badge.svg)](https://github.com/webdriverio-community/node-edgedriver/actions/workflows/ci.yml) [![Audit](https://github.com/webdriverio-community/node-edgedriver/actions/workflows/audit.yml/badge.svg)](https://github.com/webdriverio-community/node-edgedriver/actions/workflows/audit.yml)
 ==========
 
-An NPM wrapper for Microsofts' [EdgeDriver](https://developer.microsoft.com/en-us/microsoft-edge/tools/webdriver/). It manages to download various (or the latest) Edgedriver versions and provides a programmatic interface to start and stop it within Node.js. __Note:__ this is a wrapper module. If you discover any bugs with EdgeDriver, please report them in the [official repository](https://github.com/MicrosoftEdge/EdgeWebDriver).
+An NPM wrapper for Microsoft's [EdgeDriver](https://developer.microsoft.com/en-us/microsoft-edge/tools/webdriver/). It manages to download various (or the latest) Edgedriver versions and provides a programmatic interface to start and stop it within Node.js. __Note:__ this is a wrapper module. If you discover any bugs with EdgeDriver, please report them in the [official repository](https://github.com/MicrosoftEdge/EdgeWebDriver).
 
 # Installing
 
@@ -23,7 +23,7 @@ By default, this package downloads Edgedriver when used for the first time throu
 EDGEDRIVER_AUTO_INSTALL=1 npm i
 ```
 
-To get a list of available CLI options run `npx edgedriver --help`. By default this package tries to find the Mircosoft Edge version installed on a given system. If you prefer to have it install a custom EdgeDriver version you can define the environment variable `EDGEDRIVER_VERSION` when running in CLI, e.g.:
+To get a list of available CLI options run `npx edgedriver --help`. By default this package tries to find the Microsoft Edge version installed on a given system. If you prefer to have it install a custom EdgeDriver version you can define the environment variable `EDGEDRIVER_VERSION` when running in CLI, e.g.:
 
 ```sh
 $ npm i edgedriver
@@ -124,7 +124,7 @@ The `start` method offers the following options to be passed on to the actual Ed
 
 ### edgeDriverVersion
 
-The version of EdgeDriver to start. See [Egdedriver directory list](https://msedgewebdriverstorage.z22.web.core.windows.net/) for all available versions, platforms and architecture.
+The version of EdgeDriver to start. See [Edgedriver directory list](https://msedgewebdriverstorage.z22.web.core.windows.net/) for all available versions, platforms and architecture.
 
 Type: `number`<br />
 Default: `latest`

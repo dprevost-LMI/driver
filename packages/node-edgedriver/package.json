@@ -1,7 +1,7 @@
 {
   "name": "edgedriver",
   "version": "6.3.1",
-  "description": "Microsofts' EdgeDriver for Node.js",
+  "description": "Microsoft's EdgeDriver for Node.js",
   "homepage": "https://webdriver.io",
   "license": "MIT",
   "author": {
@@ -40,7 +40,7 @@
   "scripts": {
     "build": "tsc -b . && node ../../scripts/copy-cjs-pkg.mjs",
     "clean": "rimraf ./dist",
-    "postinstall": "test -f ./dist/install.js && node ./dist/install.js || echo \"Skipping install, project not build!\"",
+    "postinstall": "test -f ./dist/install.js && node ./dist/install.js || echo \"Skipping install, project not built!\"",
     "test": "run-s test:*",
     "test:lint": "oxlint .",
     "test:unit": "vitest --run",

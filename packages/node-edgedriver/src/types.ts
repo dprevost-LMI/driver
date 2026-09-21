@@ -68,7 +68,7 @@ export interface EdgedriverParameters {
     allowedOrigins?: string[]
     /**
      * The path to the root of the cache directory.
-     * @default process.env.GECKODRIVER_CACHE_DIR || os.tmpdir()
+     * @default process.env.EDGEDRIVER_CACHE_DIR || os.tmpdir()
      */
     cacheDir?: string
 }

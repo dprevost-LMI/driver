@@ -39,7 +39,6 @@
     "typeScriptVersion": "3.8.3",
     "scripts": {
         "build": "tsc -b . && node ../../scripts/copy-cjs-pkg.mjs",
-        "ci": "run-s lint build test",
         "clean": "rimraf ./dist",
         "test": "run-s test:*",
         "test:lint": "oxlint .",

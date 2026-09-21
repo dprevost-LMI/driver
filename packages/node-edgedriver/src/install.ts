@@ -205,10 +205,19 @@ export async function fetchVersion (edgeVersion: string) {
 async function downloadZip(res: Awaited<ReturnType<typeof fetch>>, cacheDir: string) {
     const zipBlob = await res.blob()
     const zip = new ZipReader(new BlobReader(zipBlob))
+    const resolvedCacheDir = path.resolve(cacheDir)
     for (const entry of await zip.getEntries()) {
         const unzippedFilePath = path.join(cacheDir, entry.filename)
         if (entry.directory) {
             continue
+        }
+        /**
+         * guard against Zip Slip: a malicious archive could contain entries
+         * with `../` or absolute paths that escape the cache directory
+         */
+        const resolvedPath = path.resolve(unzippedFilePath)
+        if (resolvedPath !== resolvedCacheDir && !resolvedPath.startsWith(resolvedCacheDir + path.sep)) {
+            throw new Error(`Zip entry "${entry.filename}" resolves outside the cache directory`)
         }
         const fileEntry = entry as FileEntry
         if (!await hasAccess(path.dirname(unzippedFilePath))) {
@@ -228,9 +237,21 @@ function sanitizeVersion (version: string) {
 }
 
 /**
+ * True when this module was invoked directly as the package's postinstall
+ * entrypoint (`dist/install.js`), as opposed to being imported as a dependency.
+ */
+export function isAutoInstallEntrypoint (argv1: string | undefined) {
+    if (!argv1) {
+        return false
+    }
+    const installJsPath = path.join('dist', 'install.js')
+    return path.normalize(argv1).endsWith(path.sep + installJsPath)
+}
+
+/**
  * download on install
  */
-if (process.argv[1] && process.argv[1].endsWith('/dist/install.js') && Boolean(process.env.EDGEDRIVER_AUTO_INSTALL)) {
+if (isAutoInstallEntrypoint(process.argv[1]) && Boolean(process.env.EDGEDRIVER_AUTO_INSTALL)) {
     await download().then(
         () => log.info('Success!'),
         (err) => log.error(`Failed to install Edgedriver: ${err.stack}`)

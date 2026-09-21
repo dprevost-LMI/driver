@@ -2,7 +2,7 @@ src
 tests
 coverage
 *.tgz
+*.tsbuildinfo
 /.*
 /*.mjs
 /tsconfig.json
-vitest.config.ts

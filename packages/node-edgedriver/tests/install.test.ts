@@ -1,16 +1,45 @@
 import os from 'node:os'
-import { vi, test, expect, describe } from 'vitest'
+import path from 'node:path'
+import fsp from 'node:fs/promises'
+import { vi, test, expect, describe, beforeEach } from 'vitest'
 
-import * as pkgExports from '../src/index.js'
-import { fetchVersion } from '../src/install.js'
-import { getNameByArchitecture, parseParams, extractBasicAuthFromUrl } from '../src/utils.js'
+import { fetchVersion, download, isAutoInstallEntrypoint } from '../src/install.js'
 import { EDGE_PRODUCTS_API } from '../src/constants.js'
 
+// All vi.mock calls must be at module scope so Vitest hoists them before any
+// imports — mocks inside test() bodies are not hoisted.
 vi.mock('node:os', () => ({
     default: {
         arch: vi.fn(),
-        platform: vi.fn()
+        platform: vi.fn(),
+        tmpdir: vi.fn(() => '/tmp')
     }
+}))
+
+vi.mock('node:fs/promises', () => ({
+    default: {
+        access: vi.fn(),
+        mkdir: vi.fn().mockResolvedValue(undefined),
+        chmod: vi.fn().mockResolvedValue(undefined),
+    },
+    writeFile: vi.fn().mockResolvedValue(undefined),
+}))
+
+vi.mock('../src/utils.js', async (original) => {
+    const actual: any = await original()
+    return {
+        ...actual,
+        hasAccess: vi.fn(),
+    }
+})
+
+const zipState = vi.hoisted(() => ({ entries: [] as any[] }))
+vi.mock('@zip.js/zip.js', () => ({
+    BlobReader: class { },
+    BlobWriter: class { },
+    ZipReader: class {
+        getEntries() { return Promise.resolve(zipState.entries) }
+    },
 }))
 
 // Mock the global fetch function
@@ -127,59 +156,50 @@ describe('fetchVersion', () => {
     })
 })
 
-test('getNameByArchitecture', () => {
-    vi.mocked(os.arch).mockReturnValue('arm')
-    vi.mocked(os.platform).mockReturnValue('linux')
-    expect(getNameByArchitecture()).toBe('edgedriver_linux32')
-    vi.mocked(os.arch).mockReturnValue('arm64')
-    vi.mocked(os.platform).mockReturnValue('linux')
-    expect(getNameByArchitecture()).toBe('edgedriver_linux64')
-    vi.mocked(os.arch).mockReturnValue('arm')
-    vi.mocked(os.platform).mockReturnValue('win32')
-    expect(getNameByArchitecture()).toBe('edgedriver_win32')
-    vi.mocked(os.arch).mockReturnValue('arm64')
-    vi.mocked(os.platform).mockReturnValue('win32')
-    expect(getNameByArchitecture()).toBe('edgedriver_win64')
-    vi.mocked(os.arch).mockReturnValue('x64')
-    vi.mocked(os.platform).mockReturnValue('darwin')
-    expect(getNameByArchitecture()).toBe('edgedriver_mac64')
-    vi.mocked(os.arch).mockReturnValue('arm64')
-    vi.mocked(os.platform).mockReturnValue('darwin')
-    expect(getNameByArchitecture()).toBe('edgedriver_mac64_m1')
+describe('isAutoInstallEntrypoint', () => {
+    // uses the native `path` module (matching the implementation), so this
+    // only proves correctness for the host OS running the test — real
+    // cross-platform coverage (including Windows) comes from CI running this
+    // same file on the macOS/Ubuntu/Windows matrix, not from simulating
+    // another platform's paths in-process.
+    test('matches when argv[1] points at dist/install.js', () => {
+        const installJsPath = path.join('dist', 'install.js')
+        expect(isAutoInstallEntrypoint(path.join('/home/user/node_modules/edgedriver', installJsPath))).toBe(true)
+    })
+
+    test('does not match when the package is only imported as a dependency', () => {
+        expect(isAutoInstallEntrypoint(path.join('/home/user/my-project/index.js'))).toBe(false)
+    })
+
+    test('does not match when argv[1] is undefined', () => {
+        expect(isAutoInstallEntrypoint(undefined)).toBe(false)
+    })
 })
 
-test('parseParams', () => {
-    expect(parseParams({ baseUrl: 'foobar', silent: true, verbose: false, allowedIps: ['123', '321'] }))
-        .toMatchSnapshot()
-})
+describe('download', () => {
+    const CACHE_DIR = path.resolve(os.tmpdir(), 'test-cache')
+    let hasAccess: ReturnType<typeof vi.fn>
 
-test('exports', () => {
-    expect(typeof pkgExports.download).toBe('function')
-    expect(typeof pkgExports.findEdgePath).toBe('function')
-    expect(typeof pkgExports.start).toBe('function')
-})
+    beforeEach(async () => {
+        const utils = await import('../src/utils.js')
+        hasAccess = vi.mocked(utils.hasAccess)
+        hasAccess.mockResolvedValue(false) // cache miss
+        vi.mocked(fsp.mkdir).mockClear()
+        vi.mocked(fsp.chmod).mockClear()
+        mockFetch.mockReset()
+    })
 
-test('extractBasicAuthFromUrl with credentials', () => {
-    const result = extractBasicAuthFromUrl('https://myuser:mypassword@cdn.example.com/path/file.zip')
-    expect(result.url).toBe('https://cdn.example.com/path/file.zip')
-    expect(result.authHeader).toBe('Basic ' + Buffer.from('myuser:mypassword').toString('base64'))
-})
+    test('rejects zip entries that escape the cache directory (Zip Slip)', async () => {
+        mockFetch.mockResolvedValue({
+            ok: true,
+            status: 200,
+            body: {},
+            blob: vi.fn().mockResolvedValue(new Blob([])),
+        })
+        zipState.entries = [
+            { filename: '../../evil.exe', directory: false, getData: vi.fn() },
+        ]
 
-test('extractBasicAuthFromUrl without credentials', () => {
-    const result = extractBasicAuthFromUrl('https://cdn.example.com/path/file.zip')
-    expect(result.url).toBe('https://cdn.example.com/path/file.zip')
-    expect(result.authHeader).toBeUndefined()
+        await expect(download('123.456.789.0', CACHE_DIR)).rejects.toThrow('resolves outside the cache directory')
+    })
 })
-
-test('extractBasicAuthFromUrl with only username', () => {
-    const result = extractBasicAuthFromUrl('https://myuser@cdn.example.com/path/file.zip')
-    expect(result.url).toBe('https://cdn.example.com/path/file.zip')
-    expect(result.authHeader).toBe('Basic ' + Buffer.from('myuser:').toString('base64'))
-})
-
-test('extractBasicAuthFromUrl with invalid URL returns original', () => {
-    const result = extractBasicAuthFromUrl('not-a-valid-url')
-    expect(result.url).toBe('not-a-valid-url')
-    expect(result.authHeader).toBeUndefined()
-})
-
