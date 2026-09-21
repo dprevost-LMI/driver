@@ -41,7 +41,7 @@ Never amend an existing commit unless explicitly asked — a fresh commit is the
 
 ## PR titles and descriptions
 
-- Title under ~70 characters, same "why, not what" rule as commit summaries — and same `type: summary` convention (Conventional Commits) as the individual commits, e.g. `fix: ...`, `feat: ...`, `chore: ...`.
+- Title under ~70 characters, same "why, not what" rule as commit summaries — and same `type: summary` convention ([Conventional Commits](https://www.conventionalcommits.org/)) as the individual commits, e.g. `fix: ...`, `feat: ...`, `chore: ...`.
 - **This matters more than it looks like it would**: PRs in this repo are squash-merged, so the PR title *becomes* the one commit message that survives on `main` — the individual commits inside the PR are gone forever. Each package's release now generates its GitHub Release notes from these types (`@release-it/conventional-changelog`, surfacing `feat`/`fix` commits). A PR titled `chore: ...` when it actually contains a fix means that fix silently never appears in any changelog. Get the type right on the title, not just on the commits inside it.
 - Body: a short `## Summary` (1-3 bullets, what changed and why it was needed — not a file-by-file listing the diff already shows) plus a `## Test plan` checklist of what was actually run. Skip sections that would just restate the diff.
 - Don't repeat the same information across every commit in the PR *and* the PR description *and* a summary comment — pick the level (usually the PR description) and let the rest stay terse.
