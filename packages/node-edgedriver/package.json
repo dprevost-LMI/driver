@@ -20,7 +20,7 @@
     "directory": "packages/node-edgedriver"
   },
   "engines": {
-    "node": ">=20.0.0"
+    "node": ">=22.0.0"
   },
   "type": "module",
   "types": "./dist/index.d.ts",
@@ -49,11 +49,11 @@
   },
   "dependencies": {
     "@wdio/logger": "^9.29.1",
-    "@zip.js/zip.js": "^2.8.11",
+    "@zip.js/zip.js": "^2.16.0",
     "decamelize": "^6.0.1",
     "edge-paths": "^3.0.5",
-    "http-proxy-agent": "^7.0.2",
-    "https-proxy-agent": "^7.0.6",
-    "which": "^6.0.1"
+    "http-proxy-agent": "^9.1.0",
+    "https-proxy-agent": "^9.1.0",
+    "which": "^7.0.0"
   }
 }

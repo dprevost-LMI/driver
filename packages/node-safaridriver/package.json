@@ -21,7 +21,7 @@
         "url": "https://github.com/webdriverio/driver/issues"
     },
     "engines": {
-        "node": ">=18.0.0"
+        "node": ">=22.0.0"
     },
     "main": "./dist/cjs/index.js",
     "type": "module",

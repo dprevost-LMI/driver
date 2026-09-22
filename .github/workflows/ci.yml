@@ -20,7 +20,7 @@ jobs:
       matrix:
         os: [macos-latest, ubuntu-latest, windows-latest]
         # full matrix on push; PRs test Node 24 only, for fast feedback
-        node: ${{ github.event_name == 'pull_request' && fromJson('[24]') || fromJson('[20, 22, 24, 26]') }}
+        node: ${{ github.event_name == 'pull_request' && fromJson('[24]') || fromJson('[22, 24, 26]') }}
     runs-on: ${{ matrix.os }}
     steps:
       - name: Set git to use LF
