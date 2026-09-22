@@ -250,22 +250,30 @@ test('download with proxy support', async () => {
             hasAccess: vi.fn().mockResolvedValue(false)
         }
     })
-    process.env.HTTPS_PROXY = 'https://proxy.com'
-    vi.resetModules()
-    const fetchSpy = vi.fn().mockResolvedValue({
-        status: 400,
-        text: () => Promise.resolve('foobar'),
-        json: () => Promise.resolve({ foo: 'bar' })
-    })
-    vi.stubGlobal('fetch', fetchSpy)
-    const { download } = await import('../src/install.js')
-    await download('stable').catch(() => {})
-    expect(fetchSpy).toBeCalledWith(
-        expect.any(String),
-        expect.objectContaining({
-            agent: expect.any(Object)
+    try {
+        process.env.HTTPS_PROXY = 'https://proxy.com'
+        vi.resetModules()
+        const fetchSpy = vi.fn().mockResolvedValue({
+            status: 400,
+            text: () => Promise.resolve('foobar'),
+            json: () => Promise.resolve({ foo: 'bar' })
         })
-    )
+        vi.stubGlobal('fetch', fetchSpy)
+        const { download } = await import('../src/install.js')
+        await download('stable').catch(() => {})
+        expect(fetchSpy).toBeCalledWith(
+            expect.any(String),
+            expect.objectContaining({
+                agent: expect.any(Object)
+            })
+        )
+    } finally {
+        // undo the runtime mock so later tests that reset modules and
+        // dynamically import utils.js/install.js see the file-level mock,
+        // not this test's proxy-specific one
+        vi.doUnmock('../src/utils.js')
+        delete process.env.HTTPS_PROXY
+    }
 })
 
 test('parseParams', () => {
