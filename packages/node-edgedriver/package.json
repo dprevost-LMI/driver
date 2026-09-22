@@ -16,7 +16,8 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git://github.com/webdriverio-community/node-edgedriver.git"
+    "url": "git+https://github.com/webdriverio/driver.git",
+    "directory": "packages/node-edgedriver"
   },
   "engines": {
     "node": ">=20.0.0"

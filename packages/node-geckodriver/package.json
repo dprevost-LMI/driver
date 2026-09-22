@@ -2,7 +2,7 @@
   "name": "geckodriver",
   "version": "6.1.1",
   "description": "Mozilla's Geckodriver for Node.js",
-  "homepage": "https://github.com/webdriverio-community/node-geckodriver#readme",
+  "homepage": "https://github.com/webdriverio/driver/tree/main/packages/node-geckodriver#readme",
   "license": "MIT",
   "author": {
     "name": "vladikoff",
@@ -25,7 +25,8 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/webdriverio-community/node-geckodriver.git"
+    "url": "git+https://github.com/webdriverio/driver.git",
+    "directory": "packages/node-geckodriver"
   },
   "scripts": {
     "build": "tsc -b . && node ../../scripts/copy-cjs-pkg.mjs",
@@ -40,7 +41,7 @@
     "geckodriver": "./bin/geckodriver.js"
   },
   "bugs": {
-    "url": "https://github.com/webdriverio-community/node-geckodriver/issues"
+    "url": "https://github.com/webdriverio/driver/issues"
   },
   "type": "module",
   "types": "./dist/index.d.ts",

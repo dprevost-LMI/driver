@@ -1,4 +1,4 @@
-Geckodriver [![CI](https://github.com/webdriverio-community/node-geckodriver/actions/workflows/ci.yml/badge.svg)](https://github.com/webdriverio-community/node-geckodriver/actions/workflows/ci.yml) [![Audit](https://github.com/webdriverio-community/node-geckodriver/actions/workflows/audit.yml/badge.svg)](https://github.com/webdriverio-community/node-geckodriver/actions/workflows/audit.yml)
+Geckodriver [![CI](https://github.com/webdriverio/driver/actions/workflows/ci.yml/badge.svg)](https://github.com/webdriverio/driver/actions/workflows/ci.yml) [![Audit](https://github.com/webdriverio/driver/actions/workflows/audit.yml/badge.svg)](https://github.com/webdriverio/driver/actions/workflows/audit.yml)
 ==========
 
 An npm wrapper for Mozilla's [Geckodriver](https://github.com/mozilla/geckodriver). It manages to download various (or the latest) Geckodriver versions and provides a programmatic interface to start and stop it within Node.js. __Note:__ this is a wrapper module. If you discover any bugs with Geckodriver, please report them in the [official repository](https://github.com/mozilla/geckodriver).
@@ -195,6 +195,11 @@ Port to listen on.
 
 Type: `number`
 
+### `websocketPort`
+Port to use for Debugger / WebDriver BiDi. If omitted and `connectExisting` is not set, it defaults to `0` (a random available port) rather than Geckodriver's native default, so that parallel instances don't collide. Setting `websocketPort` together with `connectExisting: true` throws an error, since the two options can't be used together.
+
+Type: `number`
+
 ### `profileRoot`
 Directory in which to create profiles. Defaults to the system temporary directory.
 
@@ -231,8 +236,8 @@ Default: `undefined`
 If you also look for other browser driver npm wrappers, you can find them here:
 
 - Chrome: [giggio/node-chromedriver](https://github.com/giggio/node-chromedriver)
-- Microsoft Edge: [webdriverio-community/node-edgedriver](https://github.com/webdriverio-community/node-edgedriver)
-- Safari: [webdriverio-community/node-safaridriver](https://github.com/webdriverio-community/node-safaridriver)
+- Microsoft Edge: [webdriverio/driver - node-edgedriver](https://github.com/webdriverio/driver/tree/main/packages/node-edgedriver)
+- Safari: [webdriverio/driver - node-safaridriver](https://github.com/webdriverio/driver/tree/main/packages/node-safaridriver)
 
 ---
 

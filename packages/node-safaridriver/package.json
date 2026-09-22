@@ -4,10 +4,11 @@
     "author": "Christian Bromann <mail@bromann.dev>",
     "license": "MIT",
     "description": "An NPM wrapper for handling the Safaridriver binary.",
-    "homepage": "https://github.com/webdriverio-community/node-safaridriver#readme",
+    "homepage": "https://github.com/webdriverio/driver/tree/main/packages/node-safaridriver#readme",
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/webdriverio-community/node-safaridriver.git"
+        "url": "git+https://github.com/webdriverio/driver.git",
+        "directory": "packages/node-safaridriver"
     },
     "keywords": [
         "safari",
@@ -17,7 +18,7 @@
         "selenium"
     ],
     "bugs": {
-        "url": "https://github.com/webdriverio-community/node-safaridriver/issues"
+        "url": "https://github.com/webdriverio/driver/issues"
     },
     "engines": {
         "node": ">=18.0.0"
