@@ -5,31 +5,31 @@ import { vi, test, expect } from 'vitest'
 import { type GeckodriverParameters, start } from '../src/index.ts'
 import { download } from '../src/install.js'
 
+vi.mock('../src/install.js', () =>  {
+    return {
+        download: vi.fn().mockResolvedValue('foo')
+    }
+})
+
+vi.mock('../src/utils.js', async (original) =>  {
+    const actual: any = await original()
+    return {
+        hasAccess: vi.fn().mockResolvedValue(true),
+        parseParams: actual.parseParams
+    }
+})
+
+vi.mock('node:child_process', () => ({
+    default: {
+        spawn: vi.fn(() => {
+            const child = new EventEmitter()
+            process.nextTick(() => child.emit('spawn'))
+            return child
+        }),
+    }
+}))
+
 test('start', async () => {
-    vi.mock('../src/install.js', () =>  {
-        return {
-            download: vi.fn().mockResolvedValue('foo')
-        }
-    })
-
-    vi.mock('../src/utils.js', async (original) =>  {
-        const actual: any = await original()
-        return {
-            hasAccess: vi.fn().mockResolvedValue(true),
-            parseParams: actual.parseParams
-        }
-    })
-
-    vi.mock('node:child_process', () => ({
-        default: {
-            spawn: vi.fn(() => {
-                const child = new EventEmitter()
-                process.nextTick(() => child.emit('spawn'))
-                return child
-            }),
-        }
-    }))
-
     const args: GeckodriverParameters  = {
         spawnOpts: {
             env: {

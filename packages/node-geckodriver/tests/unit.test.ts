@@ -240,8 +240,10 @@ describe('download caching behaviour', () => {
 })
 
 test('download with proxy support', async () => {
-    // Ensure hasAccess always returns false so download always calls fetch
-    vi.mock('../src/utils.js', async () => {
+    // Ensure hasAccess always returns false so download always calls fetch.
+    // vi.doMock (not vi.mock) since this must apply only to the dynamic
+    // import below, not be hoisted over the file-level '../src/utils.js' mock.
+    vi.doMock('../src/utils.js', async () => {
         const actual = await vi.importActual('../src/utils.js')
         return {
             ...actual,
